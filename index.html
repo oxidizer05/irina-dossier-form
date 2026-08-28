@@ -8,7 +8,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<!-- ?v= — версия файлов. Меняете styles/app/data — увеличьте число,
+     иначе браузер на площадке может подтянуть старую версию из кэша. -->
+<link rel="stylesheet" href="styles.css?v=2">
 <script>
 /* Режим вида ставим ДО отрисовки, чтобы макет не «прыгал» при загрузке.
    auto — по ширине экрана, mobile/desktop — принудительно кнопкой. */
@@ -148,7 +150,7 @@
 
 <div class="hint" id="hint">Панель скрыта · <b>H</b> — вернуть · <b>Пробел</b> — старт/пауза · <b>Esc</b> — сброс</div>
 
-<script src="data.js"></script>
-<script src="app.js"></script>
+<script src="data.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
