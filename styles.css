@@ -1,0 +1,199 @@
+/* ===== ПАЛИТРА ===== */
+:root{
+  --bg:#e9ecf1;
+  --paper:#ffffff;
+  --ink:#12161d;
+  --ink-soft:#5c6675;
+  --line:#c9d0da;
+  --line-soft:#e4e8ee;
+  --accent:#1e4b8f;
+  --accent-soft:#e8eefa;
+  --ok:#1c7a4a;
+  --warn:#a8791b;
+  --field:#f6f8fb;
+  --field-focus:#ffffff;
+  --shadow:0 1px 0 rgba(18,22,29,.04), 0 18px 50px rgba(18,22,29,.10);
+}
+html[data-theme="dark"]{
+  --bg:#0b0e13;
+  --paper:#141922;
+  --ink:#e7edf6;
+  --ink-soft:#8b97a8;
+  --line:#2a3341;
+  --line-soft:#1f2733;
+  --accent:#4f8bd8;
+  --accent-soft:#182536;
+  --ok:#3ec27f;
+  --warn:#d9a63c;
+  --field:#101620;
+  --field-focus:#0c1119;
+  --shadow:0 1px 0 rgba(0,0,0,.4), 0 24px 60px rgba(0,0,0,.55);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size:16px; -webkit-font-smoothing:antialiased;
+  padding:86px 24px 40px;
+}
+
+/* ===== ПАНЕЛЬ УПРАВЛЕНИЯ ===== */
+.controls{
+  position:fixed; top:20px; right:24px; z-index:50;
+  display:flex; gap:8px; align-items:center;
+  transition:opacity .18s ease, transform .18s ease;
+}
+.controls.hidden{opacity:0; transform:translateY(-8px); pointer-events:none}
+.btn{
+  font:600 14px/1 "IBM Plex Sans", sans-serif; letter-spacing:.02em;
+  padding:11px 16px; border-radius:9px; cursor:pointer;
+  border:1px solid var(--line); background:var(--paper); color:var(--ink);
+  box-shadow:0 2px 10px rgba(0,0,0,.10); transition:.15s;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-fill{background:var(--accent); border-color:var(--accent); color:#fff}
+.btn-fill .dot{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.85}
+.btn-fill.running .dot{animation:pulse .9s infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+.btn-reset{color:#b3382f; border-color:var(--line)}
+html[data-theme="dark"] .btn-reset{color:#f08a80}
+.btn-icon{padding:11px 12px; font-size:15px; min-width:42px; justify-content:center}
+.btn-icon.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+
+.hint{
+  position:fixed; top:20px; right:24px; z-index:49;
+  font-size:12px; color:var(--ink-soft); background:var(--paper);
+  border:1px solid var(--line); border-radius:8px; padding:8px 12px;
+  opacity:0; pointer-events:none; transition:opacity .3s;
+}
+.hint.show{opacity:.55}
+
+/* ===== ЛИСТ ===== */
+.page{
+  max-width:1180px; margin:0 auto; background:var(--paper);
+  border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+/* ШАПКА */
+.head{
+  display:flex; justify-content:space-between; align-items:center; gap:24px;
+  padding:22px 30px; border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg, var(--accent-soft), transparent);
+}
+.head-left{display:flex; align-items:center; gap:16px}
+.emblem svg{width:44px;height:44px;fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+.emblem .ln{stroke-width:2.6;stroke-linecap:round}
+.sys{font:600 11.5px/1 "IBM Plex Mono",monospace; letter-spacing:.16em; color:var(--accent); text-transform:uppercase}
+.ttl{margin:7px 0 0; font-size:23px; font-weight:700; letter-spacing:.01em}
+.head-right{display:flex; flex-direction:column; gap:5px; text-align:right}
+.meta-row{font:500 12px/1.4 "IBM Plex Mono",monospace; color:var(--ink-soft); letter-spacing:.05em}
+.meta-row span{margin-right:10px; opacity:.75}
+.meta-row b{color:var(--ink); font-weight:600}
+.st{padding:2px 8px; border-radius:5px; font-size:11.5px}
+.st-empty{background:var(--line-soft); color:var(--ink-soft)}
+.st-run{background:var(--accent-soft); color:var(--accent)}
+.st-done{background:rgba(28,122,74,.12); color:var(--ok)}
+
+/* ПРОГРЕСС */
+.progress{height:3px; background:var(--line-soft)}
+.progress i{display:block; height:100%; width:0; background:var(--accent); transition:width .35s ease}
+
+/* ТЕЛО */
+.body{display:grid; grid-template-columns:288px 1fr; gap:0}
+.col-photo{padding:26px 24px 26px 30px; border-right:1px solid var(--line-soft); display:flex; flex-direction:column; gap:22px}
+.col-fields{padding:26px 30px; display:grid; grid-template-columns:1fr 1fr; gap:20px 24px; align-content:start}
+.span2{grid-column:1 / -1}
+
+/* ПОЛЯ */
+.fieldbox{display:flex; flex-direction:column; gap:7px; min-width:0}
+.lbl{
+  font:600 11px/1 "IBM Plex Mono",monospace; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--ink-soft);
+}
+.inp{
+  width:100%; padding:12px 14px; font-size:18px; font-weight:500;
+  font-family:inherit; color:var(--ink); background:var(--field);
+  border:1px solid var(--line); border-radius:8px; outline:none;
+  transition:border-color .15s, background .15s, box-shadow .15s;
+}
+.inp::placeholder{color:var(--ink-soft); opacity:.45}
+.inp:focus{background:var(--field-focus); border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.inp.mono{font-family:"IBM Plex Mono",monospace; letter-spacing:.05em}
+.inp-big{font-size:20px; font-weight:600; letter-spacing:.01em}
+.ta{resize:vertical; line-height:1.55; min-height:118px; font-size:17px}
+.inp.typing{border-color:var(--accent); background:var(--field-focus); box-shadow:0 0 0 3px var(--accent-soft)}
+.inp.done{border-color:var(--line)}
+
+/* ЧИПЫ */
+.chips{display:flex; flex-wrap:wrap; gap:9px}
+.chip{
+  font:600 15px/1 "IBM Plex Sans",sans-serif; letter-spacing:.02em;
+  padding:11px 15px; border-radius:8px; cursor:pointer; user-select:none;
+  border:1px solid var(--line); background:var(--field); color:var(--ink-soft);
+  display:inline-flex; align-items:center; gap:9px; transition:.16s;
+}
+.chip:hover{border-color:var(--accent)}
+.chip .box{
+  width:15px; height:15px; border-radius:4px; border:1.6px solid var(--line);
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+}
+.chip .box::after{content:""; width:7px;height:7px;border-radius:2px;background:transparent;transition:.14s}
+.chip.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+.chip.on .box{border-color:var(--accent)}
+.chip.on .box::after{background:var(--accent)}
+.chip.pop{animation:pop .28s ease}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+
+/* ФОТО */
+.photo{
+  position:relative; aspect-ratio:3/4; width:100%; overflow:hidden;
+  border:1px solid var(--line); border-radius:10px; background:var(--field);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.photo.drag{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+.photo img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .25s}
+.photo.has img{opacity:1}
+.photo.has .photo-empty{opacity:0}
+.photo-empty{
+  display:flex; flex-direction:column; align-items:center; gap:9px; text-align:center;
+  color:var(--ink-soft); transition:opacity .25s; padding:12px;
+}
+.photo-empty svg{width:64px;height:64px;fill:none;stroke:currentColor;stroke-width:2.5;opacity:.42;stroke-linecap:round}
+.photo-empty span{font:600 11px/1 "IBM Plex Mono",monospace; letter-spacing:.11em}
+.photo-empty small{font-size:11px; opacity:.7}
+.scan{
+  position:absolute; left:0; right:0; top:0; height:0; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(30,75,143,.16) 65%, rgba(30,75,143,.55));
+  border-bottom:2px solid var(--accent); opacity:0;
+}
+.photo.scanning .scan{opacity:1; animation:scan 1.15s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes scan{from{height:0}to{height:100%}}
+.photo.scanning img{opacity:1; filter:grayscale(1) contrast(1.4) brightness(.85)}
+.photo-caption{font:500 11px/1 "IBM Plex Mono",monospace; letter-spacing:.08em; color:var(--ink-soft); text-align:center}
+
+/* ПОДВАЛ */
+.foot{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 30px; border-top:1px solid var(--line);
+  font:500 11px/1 "IBM Plex Mono",monospace; letter-spacing:.1em; color:var(--ink-soft);
+  background:var(--field);
+}
+.caret-blink{animation:blink 1.6s steps(1) infinite}
+@keyframes blink{0%,60%{opacity:1}61%,100%{opacity:.25}}
+
+/* АДАПТИВ */
+@media (max-width:900px){
+  body{padding:16px 12px 92px}
+  .body{grid-template-columns:1fr}
+  .col-photo{border-right:0; border-bottom:1px solid var(--line-soft); padding:20px}
+  .col-fields{grid-template-columns:1fr; padding:20px}
+  .photo{max-width:260px; margin:0 auto}
+  .head{flex-direction:column; align-items:flex-start; gap:14px}
+  .head-right{text-align:left}
+  .controls{top:auto; bottom:14px; right:12px; left:12px; justify-content:flex-end}
+}

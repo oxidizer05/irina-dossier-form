@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Анкета-досье · ЕИС</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ПАНЕЛЬ УПРАВЛЕНИЯ (правый верхний угол) -->
+<div class="controls" id="controls">
+  <button class="btn btn-fill" id="btnFill" title="Пробел — старт/пауза">
+    <span class="dot"></span><span id="btnFillLabel">Автозаполнение</span>
+  </button>
+  <button class="btn btn-reset" id="btnReset" title="Esc — сброс">Сброс</button>
+  <button class="btn btn-icon" id="btnKeys" title="Режим клавиш: печатает по нажатию любой клавиши" aria-label="Режим клавиш">
+    <svg viewBox="0 0 24 16" width="20" height="14" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 5.5h1M8.5 5.5h1M12 5.5h1M15.5 5.5h1M19 5.5h0M5 8.5h1M8.5 8.5h1M12 8.5h1M15.5 8.5h1M19 8.5h0M7.5 11.5h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+  </button>
+  <button class="btn btn-icon" id="btnTheme" title="Светлая / тёмная тема">◐</button>
+  <button class="btn btn-icon" id="btnHide" title="Спрятать панель (H — вернуть)">✕</button>
+</div>
+
+<div class="page">
+
+  <!-- ШАПКА -->
+  <header class="head">
+    <div class="head-left">
+      <div class="emblem" aria-hidden="true">
+        <svg viewBox="0 0 48 48"><path d="M24 3 6 10v14c0 11 7.6 18.6 18 21 10.4-2.4 18-10 18-21V10L24 3z"/><path d="M24 14v20M15 22h18" class="ln"/></svg>
+      </div>
+      <div>
+        <div class="sys" id="hSystem">ЕДИНАЯ ИНФОРМАЦИОННАЯ СИСТЕМА</div>
+        <h1 class="ttl" id="hTitle">АНКЕТА-ДОСЬЕ ФИЗИЧЕСКОГО ЛИЦА</h1>
+      </div>
+    </div>
+    <div class="head-right">
+      <div class="meta-row"><span>ДЕЛО</span><b id="hCase">№ 4472-К / 09</b></div>
+      <div class="meta-row"><span>ДАТА</span><b id="hDate">—</b></div>
+      <div class="meta-row"><span>СТАТУС</span><b id="hStatus" class="st st-empty">НЕ ЗАПОЛНЕНО</b></div>
+    </div>
+  </header>
+
+  <div class="progress"><i id="progressBar"></i></div>
+
+  <!-- ТЕЛО -->
+  <main class="body">
+
+    <!-- ЛЕВАЯ КОЛОНКА: ФОТО -->
+    <aside class="col-photo">
+      <div class="fieldbox">
+        <label class="lbl">Фото</label>
+        <div class="photo" id="photo" tabindex="0" title="Нажмите или перетащите файл, чтобы вставить фото">
+          <div class="photo-empty" id="photoEmpty">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="23" r="11"/><path d="M10 58c2-13 11-19 22-19s20 6 22 19"/></svg>
+            <span>ФОТО НЕ ЗАГРУЖЕНО</span>
+            <small>нажмите или перетащите файл</small>
+          </div>
+          <img id="photoImg" alt="">
+          <div class="scan" id="photoScan"></div>
+        </div>
+        <input type="file" id="photoInput" accept="image/*" hidden>
+        <div class="photo-caption" id="photoCaption">ID 4472-К · ФОТО 1/1</div>
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_income">Ежемесячный доход</label>
+        <input class="inp inp-big" id="f_income" data-field="income" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+    </aside>
+
+    <!-- ПРАВАЯ КОЛОНКА: ПОЛЯ -->
+    <section class="col-fields">
+
+      <div class="fieldbox span2">
+        <label class="lbl" for="f_fio">ФИО</label>
+        <input class="inp inp-big" id="f_fio" data-field="fio" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_birth">Дата рождения</label>
+        <input class="inp mono" id="f_birth" data-field="birth" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_passport">Номер паспорта</label>
+        <input class="inp mono" id="f_passport" data-field="passport" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_registered">Прописка</label>
+        <input class="inp" id="f_registered" data-field="registered" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_phone">Номер телефона</label>
+        <input class="inp mono" id="f_phone" data-field="phone" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_residence">Место жительства</label>
+        <input class="inp" id="f_residence" data-field="residence" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox">
+        <label class="lbl" for="f_work">Место работы</label>
+        <input class="inp" id="f_work" data-field="work" autocomplete="off" spellcheck="false" placeholder="—">
+      </div>
+
+      <div class="fieldbox span2">
+        <label class="lbl">Социальные сети</label>
+        <div class="chips" id="chips_social" data-field="social"></div>
+      </div>
+
+      <div class="fieldbox span2">
+        <label class="lbl" for="f_relatives">Ближайшие родственники</label>
+        <textarea class="inp ta" id="f_relatives" data-field="relatives" rows="4" spellcheck="false" placeholder="—"></textarea>
+      </div>
+
+      <div class="fieldbox span2">
+        <label class="lbl">Банки</label>
+        <div class="chips" id="chips_banks" data-field="banks"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>ДОКУМЕНТ СФОРМИРОВАН АВТОМАТИЧЕСКИ · КОПИРОВАНИЕ ЗАПРЕЩЕНО</span>
+    <span class="caret-blink">СЕАНС АКТИВЕН</span>
+  </footer>
+</div>
+
+<div class="hint" id="hint">Панель скрыта · <b>H</b> — вернуть · <b>Пробел</b> — старт/пауза · <b>Esc</b> — сброс</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
