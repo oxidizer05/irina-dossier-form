@@ -25,8 +25,6 @@
   /* ---------- шапка ---------- */
   $('hSystem').textContent = D.meta.system;
   $('hTitle').textContent = D.meta.title;
-  $('hCase').textContent = D.meta.caseNo;
-  $('hDate').textContent = new Date().toLocaleDateString('ru-RU');
 
   /* ---------- чипы ---------- */
   function buildChips(host, list) {
