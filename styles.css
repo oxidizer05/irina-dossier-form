@@ -31,7 +31,7 @@ html[data-theme="dark"]{
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{min-height:100%}   /* именно min-height: иначе нижний padding теряется под контентом */
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -186,14 +186,69 @@ html[data-theme="dark"] .btn-reset{color:#f08a80}
 .caret-blink{animation:blink 1.6s steps(1) infinite}
 @keyframes blink{0%,60%{opacity:1}61%,100%{opacity:.25}}
 
-/* АДАПТИВ */
-@media (max-width:900px){
-  body{padding:16px 12px 92px}
-  .body{grid-template-columns:1fr}
-  .col-photo{border-right:0; border-bottom:1px solid var(--line-soft); padding:20px}
-  .col-fields{grid-template-columns:1fr; padding:20px}
-  .photo{max-width:260px; margin:0 auto}
-  .head{flex-direction:column; align-items:flex-start; gap:14px}
-  .head-right{text-align:left}
-  .controls{top:auto; bottom:14px; right:12px; left:12px; justify-content:flex-end}
+/* Иконка кнопки вида: на компьютере показываем телефон (куда переключимся),
+   в телефонном виде — монитор. */
+.ic-desk{display:none}
+html.m .ic-phone{display:none}
+html.m .ic-desk{display:inline-block}
+
+/* ===== МОБИЛЬНЫЙ МАКЕТ =====
+   Включается классом .m на <html>: автоматически по ширине экрана
+   либо принудительно кнопкой «телефон / компьютер». */
+html.m body{padding:12px 10px 92px}
+html.m .page{max-width:460px; margin:0 auto; border-radius:12px}
+
+html.m .head{flex-direction:column; align-items:flex-start; gap:12px; padding:16px}
+html.m .head-left{gap:12px}
+html.m .emblem svg{width:34px;height:34px}
+html.m .sys{font-size:9.5px; letter-spacing:.12em}
+html.m .ttl{font-size:17px; margin-top:5px; line-height:1.2}
+html.m .head-right{flex-direction:row; flex-wrap:wrap; align-items:center; gap:5px 14px; text-align:left}
+html.m .meta-row{font-size:11px}
+html.m .meta-row span{margin-right:6px}
+
+html.m .body{grid-template-columns:1fr}
+
+/* Фото и доход — в одну строку, чтобы не съедать экран */
+html.m .col-photo{
+  border-right:0; border-bottom:1px solid var(--line-soft);
+  padding:16px; display:grid; grid-template-columns:126px 1fr; gap:14px; align-items:start;
+}
+html.m .photo-empty svg{width:42px;height:42px}
+html.m .photo-empty span{font-size:9px; letter-spacing:.08em}
+html.m .photo-empty small{font-size:9.5px; line-height:1.3}
+html.m .photo-caption{font-size:9.5px; letter-spacing:.05em}
+
+html.m .col-fields{grid-template-columns:1fr; padding:16px; gap:14px}
+html.m .lbl{font-size:10px; letter-spacing:.11em}
+/* 16px — иначе iOS зумит страницу при тапе по полю */
+html.m .inp{font-size:16px; padding:11px 12px; border-radius:7px}
+html.m .inp-big{font-size:17px}
+html.m .ta{font-size:15px; min-height:104px}
+html.m .chips{gap:7px}
+html.m .chip{font-size:14px; padding:9px 12px}
+html.m .chip .box{width:13px;height:13px}
+html.m .foot{padding:12px 16px; font-size:9px; gap:10px; letter-spacing:.06em}
+
+/* Панель кнопок уезжает вниз — под большой палец, по ширине листа */
+html.m .controls{
+  top:auto; bottom:10px; right:auto; left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 20px); max-width:460px;
+  justify-content:space-between; gap:6px;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+html.m .controls.hidden{transform:translateX(-50%) translateY(12px)}
+html.m .btn{padding:11px 10px; font-size:13px; box-shadow:0 4px 18px rgba(0,0,0,.18)}
+html.m .btn-fill{flex:1 1 auto; min-width:0; justify-content:center; gap:7px}
+html.m .btn-fill span:last-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+html.m .btn-reset{flex:none}
+html.m .btn-icon{min-width:38px; padding:11px 7px; flex:none}
+html.m .hint{top:auto; bottom:64px; right:auto; left:50%; transform:translateX(-50%); font-size:11px}
+
+/* Совсем узкие экраны */
+@media (max-width:360px){
+  html.m .col-photo{grid-template-columns:118px 1fr; gap:12px}
+  html.m .btn{font-size:12px; padding:10px 8px}
+  html.m .btn-icon{min-width:34px}
 }

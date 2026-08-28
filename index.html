@@ -9,6 +9,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script>
+/* Режим вида ставим ДО отрисовки, чтобы макет не «прыгал» при загрузке.
+   auto — по ширине экрана, mobile/desktop — принудительно кнопкой. */
+(function () {
+  var v; try { v = localStorage.getItem('dossier-view'); } catch (e) {}
+  var m = v === 'mobile' || (v !== 'desktop' && window.matchMedia('(max-width:900px)').matches);
+  if (m) document.documentElement.className += ' m';
+})();
+</script>
 </head>
 <body>
 
@@ -20,6 +29,10 @@
   <button class="btn btn-reset" id="btnReset" title="Esc — сброс">Сброс</button>
   <button class="btn btn-icon" id="btnKeys" title="Режим клавиш: печатает по нажатию любой клавиши" aria-label="Режим клавиш">
     <svg viewBox="0 0 24 16" width="20" height="14" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 5.5h1M8.5 5.5h1M12 5.5h1M15.5 5.5h1M19 5.5h0M5 8.5h1M8.5 8.5h1M12 8.5h1M15.5 8.5h1M19 8.5h0M7.5 11.5h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+  </button>
+  <button class="btn btn-icon" id="btnView" title="Телефонный / компьютерный вид" aria-label="Переключить вид">
+    <svg class="ic-phone" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10.6 18.6h2.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    <svg class="ic-desk" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9 20.5h6M12 17v3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
   </button>
   <button class="btn btn-icon" id="btnTheme" title="Светлая / тёмная тема">◐</button>
   <button class="btn btn-icon" id="btnHide" title="Спрятать панель (H — вернуть)">✕</button>

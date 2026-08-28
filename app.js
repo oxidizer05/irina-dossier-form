@@ -15,7 +15,7 @@
   /* ---------- элементы ---------- */
   var el = {
     fill: $('btnFill'), fillLabel: $('btnFillLabel'), reset: $('btnReset'),
-    keys: $('btnKeys'), theme: $('btnTheme'), hide: $('btnHide'),
+    keys: $('btnKeys'), view: $('btnView'), theme: $('btnTheme'), hide: $('btnHide'),
     controls: $('controls'), hint: $('hint'),
     status: $('hStatus'), bar: $('progressBar'),
     photo: $('photo'), photoImg: $('photoImg'), photoInput: $('photoInput'),
@@ -43,6 +43,8 @@
   }
   buildChips($('chips_social'), D.social);
   buildChips($('chips_banks'), D.banks);
+
+  el.relatives.addEventListener('input', function () { autoGrow(el.relatives); });
 
   /* ---------- фото ---------- */
   var photoSrc = null;
@@ -140,7 +142,14 @@
 
   function caretEnd(node) {
     try { node.selectionStart = node.selectionEnd = node.value.length; } catch (e) {}
-    if (node.tagName === 'TEXTAREA') node.scrollTop = node.scrollHeight;
+    if (node.tagName === 'TEXTAREA') autoGrow(node);
+  }
+
+  // Текстовое поле растёт под содержимое: на узком экране строки переносятся,
+  // и ничего не должно уезжать под скролл — в кадре видны все родственники.
+  function autoGrow(node) {
+    node.style.height = 'auto';
+    node.style.height = node.scrollHeight + 'px';
   }
 
   function pushChips(name) {
@@ -175,6 +184,14 @@
   /* ---------- состояние ---------- */
   var running = false, keysMode = false, timer = null;
 
+  function startLabel() {
+    return document.documentElement.classList.contains('m') ? 'Заполнить' : 'Автозаполнение';
+  }
+  function refreshFillLabel() {
+    el.fillLabel.textContent = running ? 'Пауза'
+      : (pos > 0 && pos < atoms.length ? 'Продолжить' : startLabel());
+  }
+
   function setStatus(text, cls) {
     el.status.textContent = text;
     el.status.className = 'st ' + cls;
@@ -208,7 +225,7 @@
     if (pos >= atoms.length) return;
     running = true;
     el.fill.classList.add('running');
-    el.fillLabel.textContent = 'Пауза';
+    refreshFillLabel();
     setStatus('ЗАПОЛНЯЕТСЯ', 'st-run');
     tick();
   }
@@ -217,7 +234,7 @@
     running = false;
     clearTimeout(timer);
     el.fill.classList.remove('running');
-    el.fillLabel.textContent = pos > 0 && pos < atoms.length ? 'Продолжить' : 'Автозаполнение';
+    refreshFillLabel();
     document.querySelectorAll('.inp.typing').forEach(function (n) { n.classList.remove('typing'); });
   }
 
@@ -229,10 +246,11 @@
     document.querySelectorAll('.inp').forEach(function (n) {
       n.value = '';
       n.classList.remove('typing', 'done');
+      if (n.tagName === 'TEXTAREA') n.style.height = '';
     });
     document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on', 'pop'); });
     hidePhoto();
-    el.fillLabel.textContent = 'Автозаполнение';
+    refreshFillLabel();
     setStatus('НЕ ЗАПОЛНЕНО', 'st-empty');
     updateProgress();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -265,6 +283,30 @@
     var saved = localStorage.getItem('dossier-theme');
     if (saved) document.documentElement.dataset.theme = saved;
   } catch (e) {}
+
+  /* ---------- вид: телефон / компьютер ---------- */
+  // 'auto' — по ширине экрана; после нажатия кнопки вид фиксируется.
+  var view = 'auto';
+  try { view = localStorage.getItem('dossier-view') || 'auto'; } catch (e) {}
+  var mq = window.matchMedia('(max-width:900px)');
+
+  function applyView() {
+    var mobile = view === 'mobile' || (view === 'auto' && mq.matches);
+    document.documentElement.classList.toggle('m', mobile);
+    el.view.title = mobile ? 'Переключить на компьютерный вид' : 'Переключить на телефонный вид';
+    refreshFillLabel();
+    if (el.relatives.value) { el.relatives.style.height = ''; autoGrow(el.relatives); }
+  }
+  el.view.addEventListener('click', function () {
+    view = document.documentElement.classList.contains('m') ? 'desktop' : 'mobile';
+    try { localStorage.setItem('dossier-view', view); } catch (e) {}
+    el.view.blur();
+    applyView();
+  });
+  if (mq.addEventListener) {
+    mq.addEventListener('change', function () { if (view === 'auto') applyView(); });
+  }
+  applyView();
 
   function setPanel(hidden) {
     el.controls.classList.toggle('hidden', hidden);
