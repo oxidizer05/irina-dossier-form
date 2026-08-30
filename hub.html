@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zxc.css?v=3">
+<link rel="stylesheet" href="zxc.css?v=4">
 </head>
 <body class="zxc-hub">
 
@@ -32,7 +32,7 @@
   </div>
 </div>
 
-<script src="zxc-data.js?v=3"></script>
+<script src="zxc-data.js?v=4"></script>
 <script src="sim.js?v=2"></script>
 <script>
 (function () {
@@ -70,10 +70,26 @@
 
   /* ---------- открыть плитку ---------- */
   var modal = document.getElementById('modal');
+
+  /* %%...%% в тексте → чёрная плашка шириной по длине заглушки.
+     Само слово в разметку не попадает — под плашкой пусто. */
+  function putText(node, str) {
+    String(str).split('%%').forEach(function (seg, i) {
+      if (i % 2 === 1) {
+        var bar = document.createElement('span');
+        bar.className = 'zh-redact';
+        bar.style.width = Math.max(2, seg.length * 0.56).toFixed(1) + 'ch';
+        bar.setAttribute('aria-hidden', 'true');
+        node.appendChild(bar);
+      } else if (seg) {
+        node.appendChild(document.createTextNode(seg));
+      }
+    });
+  }
   function add(host, tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
-    if (text != null) n.textContent = text;
+    if (text != null) putText(n, text);
     host.appendChild(n);
     return n;
   }
@@ -85,6 +101,17 @@
     document.getElementById('docSub').textContent = doc.sub || 'ВНУТРЕННИЙ ДОКУМЕНТ';
     var b = document.getElementById('docBody');
     b.innerHTML = '';
+
+    // официальная шапка (если задана)
+    if (doc.paper) {
+      var pp = add(b, 'div', 'zh-paper');
+      add(pp, 'div', 'org', doc.paper.org);
+      if (doc.paper.l2)  add(pp, 'div', 'l2', doc.paper.l2);
+      if (doc.paper.num) { var mt = add(pp, 'div', 'meta'); add(mt, 'span', null, doc.paper.num); }
+      if (doc.paper.grif) add(pp, 'div', 'zh-grif', doc.paper.grif);
+    }
+    if (doc.title) add(b, 'div', 'zh-title2', doc.title);
+
     (doc.sections || []).forEach(function (sec) {
       if (sec.h) add(b, 'h3', 'zh-h3', sec.h);
       (sec.p || []).forEach(function (t) { add(b, 'p', null, t); });
@@ -95,6 +122,17 @@
       if (sec.code) add(b, 'pre', 'zh-code', sec.code.join('\n'));
       if (sec.note) add(b, 'div', 'zh-note', sec.note);
     });
+
+    // подпись и печать (если заданы)
+    if (doc.sign || doc.stamp) {
+      var sg = add(b, 'div', 'zh-sign');
+      add(sg, 'div', 'who', doc.sign || '');
+      if (doc.stamp) {
+        var st = add(sg, 'div', 'zh-stamp');
+        doc.stamp.forEach(function (t) { add(st, 'span', null, t); });
+      }
+    }
+
     modal.classList.add('open');
     modal.scrollTop = 0;
   }
