@@ -96,6 +96,15 @@ html[data-theme="dark"] .btn-reset{color:#f08a80}
 .st-empty{background:var(--line-soft); color:var(--ink-soft)}
 .st-run{background:var(--accent-soft); color:var(--accent)}
 .st-done{background:rgba(28,122,74,.12); color:var(--ok)}
+.st-wait{background:rgba(168,121,27,.14); color:var(--warn)}
+/* статус, выставленный руками для крупного плана — крупнее и заметнее */
+.st-mark{
+  font-size:14px; font-weight:700; letter-spacing:.03em;
+  padding:6px 12px; border-radius:6px;
+  box-shadow:inset 0 0 0 1px currentColor;
+  animation:stpop .35s ease-out;
+}
+@keyframes stpop{from{transform:scale(.92); opacity:.4} to{transform:scale(1); opacity:1}}
 
 /* ПРОГРЕСС */
 .progress{height:3px; background:var(--line-soft)}

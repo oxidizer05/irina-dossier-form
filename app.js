@@ -189,10 +189,37 @@
       : (pos > 0 && pos < atoms.length ? 'Продолжить' : startLabel());
   }
 
+  /* ---------- СТАТУС ----------
+     Обычный статус ведёт автозаполнение. Поверх него можно
+     закрепить статус для крупного плана (D.marks): цифры 1..N,
+     0 — снять. Пока статус закреплён, автоматика его не перебивает. */
+  var marks = D.marks || [];
+  var markIdx = -1;
+  var autoText = 'НЕ ЗАПОЛНЕНО', autoCls = 'st-empty';
+
   function setStatus(text, cls) {
+    autoText = text; autoCls = cls;
+    if (markIdx >= 0) return;            // закреплён ручной — не трогаем
     el.status.textContent = text;
     el.status.className = 'st ' + cls;
   }
+  function setMark(i) {
+    if (i >= marks.length) return;
+    markIdx = i;
+    if (i < 0) {                          // снять и вернуть обычный
+      el.status.textContent = autoText;
+      el.status.className = 'st ' + autoCls;
+      return;
+    }
+    el.status.textContent = marks[i].t;
+    el.status.className = 'st st-mark st-' + (marks[i].k || 'run');
+  }
+  // клик по статусу перебирает их по кругу — если удобнее мышью
+  el.status.style.cursor = 'pointer';
+  el.status.title = 'Статус для крупного плана: клик — следующий, 0 — снять';
+  el.status.addEventListener('click', function () {
+    setMark(markIdx + 1 >= marks.length ? -1 : markIdx + 1);
+  });
   function updateProgress() {
     el.bar.style.width = (atoms.length ? (pos / atoms.length * 100) : 0) + '%';
   }
@@ -248,6 +275,7 @@
     document.querySelectorAll('.chip').forEach(function (c) { c.classList.remove('on', 'pop'); });
     hidePhoto();
     refreshFillLabel();
+    markIdx = -1;                              // сброс снимает и ручной статус
     setStatus('НЕ ЗАПОЛНЕНО', 'st-empty');
     updateProgress();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -318,6 +346,14 @@
 
     if (e.key === 'Escape') { e.preventDefault(); resetAll(); return; }
 
+    // Ctrl+цифра — статус для крупного плана. Работает всегда,
+    // в том числе в режиме клавиш и когда курсор стоит в поле.
+    if (e.ctrlKey && !e.altKey && /^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      setMark(e.key === '0' ? -1 : +e.key - 1);
+      return;
+    }
+
     // Режим клавиш: любая «печатная» клавиша выдаёт следующий символ сценария
     if (keysMode && !e.metaKey && !e.ctrlKey && !e.altKey) {
       if (e.key.length === 1 || e.key === 'Enter' || e.key === 'Backspace' || e.key === 'Tab') {
@@ -328,6 +364,13 @@
     }
 
     if (inField) return;                       // не мешаем ручному вводу
+
+    // Просто цифра — тот же статус, когда режим клавиш выключен
+    if (/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+      setMark(e.key === '0' ? -1 : +e.key - 1);
+      return;
+    }
 
     if (e.code === 'Space' || e.key === 'Enter') { e.preventDefault(); toggleFill(); return; }
     if (e.key === 'h' || e.key === 'H' || e.key === 'р' || e.key === 'Р') {
