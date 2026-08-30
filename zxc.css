@@ -123,6 +123,20 @@ body.zxc-hub{background:#f2f2f7; color:#2b2b2b; padding:0 0 64px}
 .zh-doc .zh-sub{color:#888; font-size:13px; margin-bottom:22px;
   font-family:"IBM Plex Mono", monospace; letter-spacing:.05em}
 .zh-doc p{line-height:1.62; color:#3a3a3a; margin:0 0 15px}
+.zh-h3{margin:22px 0 9px; font:700 15px "IBM Plex Sans"; color:#2f2f2f; letter-spacing:.01em}
+.zh-h3:first-child{margin-top:2px}
+.zh-steps{margin:0 0 15px; padding-left:22px; color:#3a3a3a; line-height:1.6}
+.zh-steps li{margin:5px 0}
+.zh-code{
+  margin:0 0 16px; background:#f4f5f7; border:1px solid #e2e4e8; border-radius:6px;
+  padding:14px 16px; overflow-x:auto;
+  font:400 13.5px/1.6 "IBM Plex Mono", "Courier New", monospace; color:#2f3338; white-space:pre;
+}
+.zh-note{
+  margin:0 0 16px; padding:12px 15px; border-left:3px solid #c9a227;
+  background:#fbf6e7; border-radius:0 6px 6px 0; color:#5a4a1a;
+  font-size:14px; line-height:1.55;
+}
 .zh-close{
   position:absolute; top:14px; right:16px; z-index:9001;
   background:#f1f2f5; border:1px solid #dcdfe4; border-radius:8px; padding:8px 13px;
