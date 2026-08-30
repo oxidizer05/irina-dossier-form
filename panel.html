@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Подсказки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zxc.css?v=1">
+</head>
+<body class="zxc-panel">
+
+<div class="zp-tabs" id="tabs"></div>
+
+<div class="zp-bar">
+  <select class="zp-sel" id="sel"></select>
+  <button class="zp-b" id="bAdd">Добавить</button>
+  <button class="zp-b mute" id="bDel">Удалить</button>
+  <button class="zp-b mute" id="bPass">Передать</button>
+</div>
+
+<div class="zp-grid">
+  <!-- левая колонка -->
+  <div class="zp-col" id="colLeft"></div>
+
+  <!-- центр -->
+  <div class="zp-col">
+    <input class="zp-inp" id="cHead" placeholder="Информация о клиенте (Обязательно заполнить)">
+    <textarea class="zp-inp zp-ta" id="cBody" placeholder="Введите информацию о клиенте..."></textarea>
+    <button class="zp-save" id="bSave">Сохранить изменения</button>
+
+    <div class="zp-points" id="points"></div>
+    <div class="zp-hr" id="hr"></div>
+    <textarea class="zp-inp zp-script" id="script" spellcheck="false"
+              placeholder="Выберите пункт слева — здесь появится текст"></textarea>
+  </div>
+
+  <!-- правая колонка -->
+  <div class="zp-col" id="colRight"></div>
+</div>
+
+<script src="zxc-data.js?v=1"></script>
+<script src="sim.js?v=1"></script>
+<script>
+(function () {
+  var D = window.ZXC, P = D.panel;
+  var cur = 0;
+
+  var elTabs   = document.getElementById('tabs');
+  var elLeft   = document.getElementById('colLeft');
+  var elRight  = document.getElementById('colRight');
+  var elPoints = document.getElementById('points');
+  var elScript = document.getElementById('script');
+  var elHr     = document.getElementById('hr');
+
+  /* ---------- выпадашка ---------- */
+  var sel = document.getElementById('sel');
+  P.selectOptions.forEach(function (o) {
+    var op = document.createElement('option');
+    op.textContent = o; sel.appendChild(op);
+  });
+
+  /* ---------- вкладки ---------- */
+  P.tabs.forEach(function (t, i) {
+    var b = document.createElement('div');
+    b.className = 'zp-tab' + (i === 0 ? ' on' : '');
+    b.textContent = t.name;
+    b.dataset.i = i;
+    b.addEventListener('click', function () { show(i); });
+    elTabs.appendChild(b);
+  });
+
+  function keyBtn(k) {
+    var b = document.createElement('button');
+    b.className = 'zp-k ' + (k.k === 'red' ? '' : k.k);
+    b.textContent = k.t;
+    b.addEventListener('click', function () { pick(b); });
+    return b;
+  }
+
+  /* нажали подсказку — в нижнее поле «подгружается» её текст */
+  function pick(btn) {
+    Array.prototype.forEach.call(document.querySelectorAll('.zp-k.on'),
+      function (n) { n.classList.remove('on'); });
+    btn.classList.add('on');
+    elScript.value = D.filler.join('\n\n');
+    elScript.scrollTop = 0;
+  }
+
+  function show(i) {
+    cur = i;
+    var t = P.tabs[i];
+    Array.prototype.forEach.call(elTabs.children, function (n, j) {
+      n.classList.toggle('on', j === i);
+    });
+
+    elLeft.innerHTML = '';
+    t.left.forEach(function (k) { elLeft.appendChild(keyBtn(k)); });
+    elRight.innerHTML = '';
+    t.right.forEach(function (k) { elRight.appendChild(keyBtn(k)); });
+
+    elPoints.innerHTML = '';
+    var n = 0;
+    function block(list) {
+      if (!list) return;
+      list.forEach(function (p, j) {
+        var row = document.createElement('div');
+        row.className = 'zp-row';
+        row.innerHTML = '<div class="zp-lab"></div><div class="zp-slot"></div>';
+        row.querySelector('.zp-lab').textContent = (j + 1) + ') ' + p;
+        row.querySelector('.zp-slot').textContent = p;
+        elPoints.appendChild(row);
+        n++;
+      });
+    }
+    block(t.points);
+    if (t.points2) {
+      var gap = document.createElement('div');
+      gap.style.height = '18px';
+      elPoints.appendChild(gap);
+      block(t.points2);
+    }
+    elHr.style.display = n ? '' : 'none';
+    elScript.classList.toggle('zp-script', true);
+    elScript.style.minHeight = t.script ? '430px' : '190px';
+    elScript.value = '';
+  }
+
+  show(0);
+
+  /* ---------- навигация с сохранением режима ---------- */
+  function auto() { return /auto=1/.test(location.search); }
+  function nav(p) {
+    var s = '?auto=1';
+    var sp = (location.search.match(/speed=(\w+)/) || [])[1];
+    if (sp) s += '&speed=' + sp;
+    location.href = p + s;
+  }
+
+  /* ---------- сценарий имитации ---------- */
+  window.SCENARIO = function (S) {
+    function leftBtn(i) { return function () { return elLeft.children[i]; }; }
+    function rightBtn(i) { return function () { return elRight.children[i]; }; }
+    function tab(i) { return function () { return elTabs.children[i]; }; }
+
+    S.wait(500);
+    S.type('#cBody', P.client);
+    S.click('#bSave');
+    S.wait(400);
+
+    S.click(leftBtn(2));
+    S.wait(700);
+    S.select('#script');
+    S.unselect();
+    S.scroll('#points');
+    S.hot(function () { return elPoints.children[1]; }, 1100);
+
+    S.click(tab(3));
+    S.wait(600);
+    S.click(leftBtn(7));
+    S.wait(800);
+    S.select('#script');
+    S.unselect();
+    S.click(rightBtn(4));
+    S.wait(900);
+
+    S.top();
+    S.click(tab(1));
+    S.wait(500);
+    S.click(leftBtn(3));
+    S.wait(900);
+    S.hot('#cHead', 900);
+
+    S.click(tab(0));
+    S.wait(700);
+
+    S.act(function () { nav('hub.html'); }, 4000);
+  };
+
+  SIM.init({
+    autostart: auto(),
+    back: { href: 'hub.html', text: 'Инструкции' },
+    onReset: function () {
+      document.getElementById('cHead').value = '';
+      document.getElementById('cBody').value = '';
+      elScript.value = '';
+      show(0);
+    },
+  });
+})();
+</script>
+</body>
+</html>

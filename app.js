@@ -23,7 +23,6 @@
   };
 
   /* ---------- шапка ---------- */
-  $('hSystem').textContent = D.meta.system;
   $('hTitle').textContent = D.meta.title;
 
   /* ---------- чипы ---------- */

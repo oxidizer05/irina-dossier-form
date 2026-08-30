@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panopticon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zxc.css?v=1">
+</head>
+<body class="zxc-pan">
+
+<header class="pn-top">
+  <div class="pn-logo" id="logo"></div>
+  <div class="pn-name">Panopticon</div>
+  <div class="pn-login" id="goSignin">Войти</div>
+</header>
+
+<div class="pn-wrap">
+
+  <!-- ВХОД -->
+  <section id="v-signin" hidden>
+    <h1 class="pn-h1">Sign in</h1>
+    <div class="pn-signin">
+      <label class="pn-lbl" for="sName">Имя</label>
+      <input class="pn-inp" id="sName" autocomplete="off">
+      <label class="pn-lbl" for="sPass">Пароль</label>
+      <input class="pn-inp" id="sPass" type="password" autocomplete="off">
+    </div>
+    <button class="pn-b" id="sGo">Войти</button>
+  </section>
+
+  <!-- ГРУППЫ -->
+  <section id="v-groups" hidden>
+    <h1 class="pn-h1 line">Match Users to Groups</h1>
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:40px">
+      <div>
+        <h2 class="pn-h2">Groups</h2>
+        <div class="pn-scroll"><table class="pn-tbl" id="tGroups"></table></div>
+      </div>
+      <div>
+        <h2 class="pn-h2">Create New Group</h2>
+        <label class="pn-lbl" for="gName">Group Name</label>
+        <input class="pn-inp wide" id="gName" autocomplete="off" style="margin-bottom:16px">
+        <label class="pn-lbl" for="gThr">Threshold</label>
+        <input class="pn-inp wide" id="gThr" type="number" autocomplete="off" style="margin-bottom:16px">
+        <label class="pn-lbl" for="gStr">Select Strategy</label>
+        <select class="pn-inp wide" id="gStr" style="margin-bottom:20px"><option>dafault</option></select>
+        <div><button class="pn-b" id="gCreate">Create Group</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ПРОКСИ -->
+  <section id="v-proxies" hidden>
+    <h1 class="pn-h1">Proxy List (socks5)</h1>
+    <label class="pn-lbl">Upload Proxy List (format: ip:port or ip:port:login:password, one per line)</label>
+    <textarea class="pn-ta" id="pxIn" spellcheck="false"></textarea>
+    <div style="margin:18px 0"><button class="pn-b" id="pxUpload">Upload</button></div>
+    <div class="pn-acts">
+      <button class="pn-b grey" id="pxAll">Select All</button>
+      <button class="pn-b cyan">Check Selected</button>
+      <button class="pn-b amber">Set Selected as Worker</button>
+      <button class="pn-b green">Set Selected as Checker</button>
+      <button class="pn-b rose">Delete Selected</button>
+      <button class="pn-b">Reassign All</button>
+    </div>
+    <div class="pn-scroll"><table class="pn-tbl" id="tProxy"></table></div>
+  </section>
+
+  <!-- СТАТИСТИКА -->
+  <section id="v-stats" hidden>
+    <h1 class="pn-h1" id="stTitle">Статистика по стратегиям</h1>
+    <div class="pn-f">
+      <div>
+        <label class="pn-lbl" for="stDate">Выберите дату:</label>
+        <input class="pn-inp" id="stDate" type="date" value="2025-12-02">
+      </div>
+      <div id="stTypeWrap" hidden>
+        <label class="pn-lbl" for="stType">Тип телегатора:</label>
+        <input class="pn-inp" id="stType" value="Worker" readonly>
+      </div>
+      <button class="pn-b" id="stShow">Показать</button>
+    </div>
+    <div class="pn-tabs" id="stTabs"></div>
+    <div class="pn-scroll"><table class="pn-tbl" id="tStats"></table></div>
+  </section>
+
+</div>
+
+<footer class="pn-foot">
+  <div class="pn-foot-in">
+    <div>
+      <div style="margin-bottom:10px">PANOPTICON.SBS</div>
+      <div>All rights reserved ©</div>
+    </div>
+    <div><a>Download client</a><a>Download ZxcGram</a></div>
+    <div><a>Корзина</a><a>Продам гараж</a></div>
+  </div>
+  <div class="pn-rel" id="rel"></div>
+</footer>
+
+<script src="zxc-data.js?v=1"></script>
+<script src="sim.js?v=1"></script>
+<script>
+(function () {
+  var D = window.ZXC, P = D.pan;
+
+  document.getElementById('logo').innerHTML = window.ZXC_ICONS.eye;
+  document.getElementById('rel').innerHTML =
+    P.release.replace(/Release: (.+)$/, 'Release: <i>$1</i>');
+
+  /* ---------- переключение экранов ---------- */
+  var views = ['signin', 'groups', 'proxies', 'stats'];
+  function show(v) {
+    views.forEach(function (n) {
+      document.getElementById('v-' + n).hidden = (n !== v);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.getElementById('goSignin').addEventListener('click', function () { show('signin'); });
+  document.getElementById('sGo').addEventListener('click', function () { show('groups'); });
+  document.getElementById('gCreate').addEventListener('click', function () {
+    var n = document.getElementById('gName').value.trim();
+    if (!n) return;
+    P.groups.push({ name: n, strategy: 'dafault', users: 0,
+                    threshold: +document.getElementById('gThr').value || 5 });
+    drawGroups();
+    document.getElementById('gName').value = '';
+    document.getElementById('gThr').value = '';
+  });
+
+  /* ---------- таблицы ---------- */
+  function table(host, head, rows, cls) {
+    var h = '<tr>' + head.map(function (t) { return '<th>' + t + '</th>'; }).join('') + '</tr>';
+    var b = rows.map(function (r) {
+      return '<tr>' + r.map(function (c) {
+        if (c === 'ok') return '<td class="pn-ok">✅</td>';
+        var num = /^[\d.,%]+$/.test(String(c));
+        return '<td class="' + (num ? 'num pn-tick' : '') + '">' + c + '</td>';
+      }).join('') + '</tr>';
+    }).join('');
+    host.innerHTML = h + b;
+    if (cls) host.className = 'pn-tbl ' + cls;
+  }
+
+  function drawGroups() {
+    table(document.getElementById('tGroups'),
+      ['Group Name', 'Strategy Name', 'Number of Users', 'Threshold'],
+      P.groups.map(function (g) {
+        return ['<a>' + g.name + '</a>', '<a>' + g.strategy + '</a>', g.users, g.threshold];
+      }));
+  }
+  drawGroups();
+
+  function drawProxies() {
+    var head = ['ID', 'Proxy', 'Type', 'Status', 'New Value', 'Update', 'Actions'];
+    var rows = P.proxies.map(function (p) {
+      return [p.id, p.addr, p.type,
+        '<b>' + p.st + '</b>',
+        '<input class="pn-inp" placeholder="New proxy value" style="min-width:170px;height:34px">',
+        '<button class="pn-b sm">Update</button>',
+        '<button class="pn-b sm cyan">Check</button> ' +
+        '<button class="pn-b sm amber">Set Worker</button> ' +
+        '<button class="pn-b sm green">Set Checker</button> ' +
+        '<button class="pn-b sm rose">Delete</button>'];
+    });
+    table(document.getElementById('tProxy'), head, rows);
+  }
+  drawProxies();
+
+  /* ---------- статистика ---------- */
+  var stTab = 0;
+  var titles = ['Статистика по стратегиям', 'Статистика по пробивам', 'Статистика по телегаторам',
+                'Статистика по сообщениям', 'Статистика по группам', 'Статистика по пользователям',
+                'Пробивы: сводка', 'Статистика по прокси'];
+
+  P.tabs.forEach(function (t, i) {
+    var b = document.createElement('button');
+    b.className = 'pn-b';
+    b.textContent = t;
+    b.addEventListener('click', function () { stShow(i); });
+    document.getElementById('stTabs').appendChild(b);
+  });
+
+  function genRows(n, cols) {
+    var out = [], d = 2;
+    for (var i = 0; i < n; i++) {
+      var tot = 40 + Math.floor(Math.random() * 90);
+      var bad = Math.floor(Math.random() * 4);
+      var r = ['0' + (d + i) + '.12.2025', String(tot), String(tot - bad), String(bad),
+               (bad / tot * 100).toFixed(1) + '%'];
+      out.push(r.slice(0, cols));
+    }
+    return out;
+  }
+
+  function stShow(i) {
+    stTab = i;
+    document.getElementById('stTitle').textContent = titles[i] || P.tabs[i];
+    document.getElementById('stTypeWrap').hidden = (i !== 2);
+    var host = document.getElementById('tStats');
+    if (i === 0)      table(host, P.strategies.head, P.strategies.rows);
+    else if (i === 2) table(host, P.telegators.head, P.telegators.rows);
+    else if (i === 5) table(host, P.users.head, P.users.rows);
+    else if (i === 4) table(host, ['Group Name', 'Strategy Name', 'Number of Users', 'Threshold'],
+                            P.groups.map(function (g) { return [g.name, g.strategy, g.users, g.threshold]; }));
+    else table(host, ['Дата', 'Всего', 'Успешно', 'Неуспешно', '% неуспешных'], genRows(5, 5));
+  }
+  stShow(0);
+
+  /* ---------- живые цифры: раз в пару секунд одна ячейка «дышит» ---------- */
+  setInterval(function () {
+    var cells = document.querySelectorAll('#v-stats .pn-tick');
+    if (!cells.length || document.getElementById('v-stats').hidden) return;
+    var c = cells[Math.floor(Math.random() * cells.length)];
+    var v = c.textContent;
+    if (/^\d+$/.test(v)) c.textContent = String(+v + 1 + Math.floor(Math.random() * 3));
+    c.classList.add('hit');
+    setTimeout(function () { c.classList.remove('hit'); }, 800);
+  }, 2600);
+
+  /* ---------- навигация с сохранением режима ---------- */
+  function auto() { return /auto=1/.test(location.search); }
+  function nav(p) {
+    var s = '?auto=1';
+    var sp = (location.search.match(/speed=(\w+)/) || [])[1];
+    if (sp) s += '&speed=' + sp;
+    location.href = p + s;
+  }
+
+  /* ---------- сценарий имитации ---------- */
+  window.SCENARIO = function (S) {
+    function stab(i) { return function () { return document.getElementById('stTabs').children[i]; }; }
+
+    S.act(function () { show('signin'); }, 700);
+    S.type('#sName', 'operator-04');
+    S.type('#sPass', '••••••••');
+    S.click('#sGo');
+    S.wait(700);
+
+    S.hot('#tGroups', 1100);
+    S.type('#gName', 'Смена 3');
+    S.type('#gThr', '25');
+    S.click('#gCreate');
+    S.wait(800);
+
+    S.act(function () { show('proxies'); }, 800);
+    S.hot('#pxIn', 900);
+    S.click('#pxAll');
+    S.scroll('#tProxy');
+    S.select(function () { return document.querySelector('#tProxy tr:nth-child(3) td:nth-child(2)'); });
+    S.unselect();
+    S.wait(700);
+
+    S.act(function () { show('stats'); }, 800);
+    S.click(stab(2));
+    S.wait(900);
+    S.select(function () { return document.querySelector('#tStats tr:nth-child(2)'); });
+    S.unselect();
+    S.click(stab(5));
+    S.wait(1000);
+    S.hot('#tStats', 1300);
+    S.click(stab(0));
+    S.wait(900);
+    S.click('#stShow');
+    S.wait(1200);
+
+    S.act(function () { nav('panel.html'); }, 4000);
+  };
+
+  SIM.init({
+    autostart: auto(),
+    back: { href: 'hub.html', text: 'Инструкции' },
+    onReset: function () {
+      show('signin');
+      ['sName', 'sPass', 'gName', 'gThr', 'pxIn'].forEach(function (id) {
+        document.getElementById(id).value = '';
+      });
+      stShow(0);
+    },
+  });
+
+  show(auto() ? 'signin' : 'stats');
+})();
+</script>
+</body>
+</html>

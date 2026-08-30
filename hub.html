@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>ZXC Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="zxc.css?v=1">
+</head>
+<body class="zxc-hub">
+
+<div class="zh-top" id="brandTop">ZXC Development</div>
+
+<div class="zh-wrap" id="cards"></div>
+
+<div class="zh-foot">
+  <div class="zh-stripe"></div>
+  <div class="zh-stripe2"></div>
+  <div class="zh-bar" id="brandFoot">© 2024 ZXC Development</div>
+</div>
+
+<!-- окно документа -->
+<div class="zh-modal" id="modal">
+  <div class="zh-doc">
+    <button class="zh-close" id="modalClose">Закрыть</button>
+    <h2 id="docTitle">Документ</h2>
+    <div class="zh-sub" id="docSub">РАЗДЕЛ · РЕДАКЦИЯ 1 · ВНУТРЕННИЙ ДОКУМЕНТ</div>
+    <div id="docBody"></div>
+  </div>
+</div>
+
+<script src="zxc-data.js?v=1"></script>
+<script src="sim.js?v=1"></script>
+<script>
+(function () {
+  var D = window.ZXC, I = window.ZXC_ICONS;
+
+  document.getElementById('brandTop').textContent = D.brand.name;
+  document.getElementById('brandFoot').textContent = D.brand.footer;
+
+  /* ---------- плитки ---------- */
+  var host = document.getElementById('cards');
+  D.cards.forEach(function (c, i) {
+    var d = document.createElement('div');
+    d.className = 'zh-card';
+    d.dataset.i = i;
+    d.innerHTML =
+      '<div class="zh-ico">' + (I[c.icon] || I.book) + '</div>' +
+      '<div class="zh-txt">' +
+        '<div class="zh-name"></div>' +
+        '<p class="zh-desc"></p>' +
+      '</div>';
+    d.querySelector('.zh-name').textContent = c.title;
+    d.querySelector('.zh-desc').textContent = c.desc;
+    d.addEventListener('click', function () { open(i); });
+    host.appendChild(d);
+  });
+
+  /* ---------- ссылки с сохранением режима ---------- */
+  function auto() { return /auto=1/.test(location.search); }
+  function nav(p) {
+    var s = '?auto=1';
+    var sp = (location.search.match(/speed=(\w+)/) || [])[1];
+    if (sp) s += '&speed=' + sp;
+    location.href = p + s;
+  }
+
+  /* ---------- открыть плитку ---------- */
+  var modal = document.getElementById('modal');
+  function open(i) {
+    var c = D.cards[i];
+    if (c.go) { nav(c.go); return; }
+    document.getElementById('docTitle').textContent = c.title;
+    document.getElementById('docSub').textContent =
+      (D.docs[c.doc] || c.title).toUpperCase() + ' · ВНУТРЕННИЙ ДОКУМЕНТ';
+    var b = document.getElementById('docBody');
+    b.innerHTML = '';
+    D.filler.forEach(function (t) {
+      var p = document.createElement('p');
+      p.textContent = t;
+      b.appendChild(p);
+    });
+    modal.classList.add('open');
+    modal.scrollTop = 0;
+  }
+  function close() { modal.classList.remove('open'); }
+  document.getElementById('modalClose').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+
+  /* ---------- сценарий имитации ---------- */
+  window.SCENARIO = function (S) {
+    var cards = document.querySelectorAll('.zh-card');
+    function card(i) { return function () { return cards[i]; }; }
+
+    S.wait(600);
+    S.hot(card(2), 1100);
+    S.hot(card(5), 900);
+    S.scroll(card(7));
+    S.hot(card(7), 1200);
+    S.top();
+
+    // открыть документ, почитать, выделить абзац
+    S.click(card(4));
+    S.wait(700);
+    S.select('#docBody p:nth-child(2)');
+    S.unselect();
+    S.scroll('#docBody p:nth-child(5)');
+    S.wait(900);
+    S.select('#docBody p:nth-child(5)');
+    S.unselect();
+    S.click('#modalClose');
+    S.wait(500);
+
+    S.top();
+    S.hot(card(1), 900);
+    S.scroll(card(9));
+    S.hot(card(9), 1000);
+    S.top();
+    S.wait(600);
+
+    // уходим в Panopticon — там сценарий подхватится сам
+    S.act(function () { nav('panopticon.html'); }, 4000);
+  };
+
+  SIM.init({
+    autostart: auto(),
+    back: { href: 'index.html', text: 'Анкета' },
+    onReset: close,
+  });
+})();
+</script>
+</body>
+</html>
