@@ -231,6 +231,12 @@ body.zxc-panel{background:#1b1b1d; color:#dcdcdc; padding:0}
 .zp-inp:focus{outline:none; border-color:#6d84ad; background:#26262b}
 .zp-ta{min-height:96px; resize:vertical; line-height:1.5}
 .zp-script{min-height:430px; line-height:1.72; font-size:15.5px; color:#c9c9cf}
+/* короткая вспышка, когда в поле подгрузили текст подсказки */
+.zp-flash{animation:zpflash .75s ease-out}
+@keyframes zpflash{
+  0%  {border-color:#8fa8d4; box-shadow:0 0 0 3px rgba(120,160,220,.30)}
+  100%{border-color:#46464c; box-shadow:0 0 0 0 rgba(120,160,220,0)}
+}
 .zp-save{
   align-self:flex-start;
   margin:12px 0 22px; padding:11px 16px; border:1px solid #45454b; border-radius:6px;

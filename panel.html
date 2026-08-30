@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zxc.css?v=4">
+<link rel="stylesheet" href="zxc.css?v=5">
 </head>
 <body class="zxc-panel">
 
@@ -31,10 +31,13 @@
     <textarea class="zp-inp zp-ta" id="cBody" placeholder="Введите информацию о клиенте..."></textarea>
     <button class="zp-save" id="bSave">Сохранить изменения</button>
 
-    <div class="zp-points" id="points"></div>
-    <div class="zp-hr" id="hr"></div>
+    <!-- текст подсказки держим НАД списком пунктов: иначе на экране
+         ноутбука он уезжает под нижний край и кажется, что кнопки
+         не работают -->
     <textarea class="zp-inp zp-script" id="script" spellcheck="false"
-              placeholder="Выберите пункт слева — здесь появится текст"></textarea>
+              placeholder="Выберите подсказку слева или справа — здесь появится текст"></textarea>
+    <div class="zp-hr" id="hr"></div>
+    <div class="zp-points" id="points"></div>
   </div>
 
   <!-- правая колонка -->
@@ -80,13 +83,23 @@
     return b;
   }
 
-  /* нажали подсказку — в нижнее поле «подгружается» её текст */
+  /* нажали подсказку — в поле «подгружается» её текст.
+     Поле подсвечиваем и, если его не видно, подкручиваем к нему:
+     на площадке должно быть сразу понятно, что кнопка сработала. */
   function pick(btn) {
     Array.prototype.forEach.call(document.querySelectorAll('.zp-k.on'),
       function (n) { n.classList.remove('on'); });
     btn.classList.add('on');
     elScript.value = D.filler.join('\n\n');
     elScript.scrollTop = 0;
+
+    var r = elScript.getBoundingClientRect();
+    if (r.top < 60 || r.bottom > window.innerHeight - 20) {
+      elScript.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    elScript.classList.remove('zp-flash');
+    void elScript.offsetWidth;              // перезапуск анимации
+    elScript.classList.add('zp-flash');
   }
 
   function show(i) {
