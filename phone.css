@@ -287,3 +287,12 @@ body{
   /* на широком экране без ?frame прижимаем к ширине 15 Pro Max по центру */
   .stage:not(.frame) .device{width:430px; box-shadow:0 0 0 1px #1b1c1f}
 }
+
+/* ===== ПОЛНОЭКРАННЫЙ ЗАПУСК С ДОМАШНЕГО ЭКРАНА =====
+   Свой статус-бар прячем — сверху виден настоящий статус-бар iPhone
+   (реальное время, wi-fi, заряд). Учитываем «чёлку» и нижнюю черту. */
+.standalone .statusbar{display:none}
+.standalone .dock{bottom:calc(12px + env(safe-area-inset-bottom))}
+.standalone .msg-bar{height:calc(78px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom)}
+.standalone .ctl{bottom:calc(12px + env(safe-area-inset-bottom))}
+.standalone .remote.on{height:calc(26px + env(safe-area-inset-top)); align-items:flex-end; padding-bottom:4px}
