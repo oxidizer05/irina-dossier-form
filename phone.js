@@ -91,6 +91,7 @@ window.PHONESIM = (function () {
     take: function (on) {
       steps.push({ run: function (done) {
         takeover = on;
+        finger.classList.toggle('on', on);     // палец появляется/исчезает вместе с «чужим»
         finger.classList.toggle('take', on);
         remote.classList.toggle('on', on);
         done(on ? 500 : 120);
@@ -119,7 +120,8 @@ window.PHONESIM = (function () {
   function play(fn) { stop(); steps = []; idx = 0; scenarioFn = fn; start(); }
   function start() {
     if (running) return;
-    running = true; finger.classList.add('on');
+    running = true;
+    finger.classList.toggle('on', takeover);   // палец виден только в фазе «чужого»
     btnRun.classList.add('running'); btnLabel.textContent = 'Пауза';
     ctl.classList.add('hidden');        // прячем пульт, чтобы не попадал в кадр
     if (!steps.length) rebuild();
@@ -191,5 +193,5 @@ window.PHONESIM = (function () {
 
   return { init: init, start: start, stop: stop, reset: reset,
            play: play, isRunning: function () { return running; },
-           take: function (on) { takeover = on; finger.classList.toggle('take', on); remote.classList.toggle('on', on); } };
+           take: function (on) { takeover = on; finger.classList.toggle('on', on); finger.classList.toggle('take', on); remote.classList.toggle('on', on); } };
 })();
