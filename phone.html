@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="phone.css?v=2">
+<link rel="stylesheet" href="phone.css?v=3">
 </head>
 <body>
 
@@ -192,7 +192,8 @@
   </div>
 </div>
 
-<script src="phone-data.js?v=2"></script>
+<script src="phone-data.js?v=3"></script>
+<script src="phone-icons.js?v=1"></script>
 <script src="phone.js?v=2"></script>
 <script>
 (function () {
@@ -237,33 +238,17 @@
     '<div class="wg-day">' + H.calendar.day + '</div>' +
     '<div class="wg-note">' + H.calendar.note + '</div>';
 
-  // одна иконка приложения
-  function iconInner(glyph) {
-    if (glyph === 'cal')
-      return '<div style="text-align:center;line-height:1"><div style="color:#ff3b30;font-weight:800;font-size:11px">СР</div>' +
-             '<div style="color:#111;font-weight:800;font-size:26px">' + H.calendar.day + '</div></div>';
-    if (glyph === 'appstore')
-      return '<div style="color:#fff;font-weight:800;font-style:italic;font-size:28px;letter-spacing:-1px">A</div>';
-    if (glyph === 'remind')
-      return '<div style="display:flex;flex-direction:column;gap:5px">' +
-             '<span style="width:9px;height:9px;border-radius:50%;background:#5e5ce6"></span>' +
-             '<span style="width:9px;height:9px;border-radius:50%;background:#ff375f"></span>' +
-             '<span style="width:9px;height:9px;border-radius:50%;background:#ff9500"></span></div>';
-    if (glyph === 'sber')
-      return '<svg viewBox="0 0 34 34" width="30" height="30"><path d="M7 18a10 10 0 1 1 3 7" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>' +
-             '<path d="M9 16l5 5 10-11" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    return '<span style="font-size:30px;line-height:1">' + glyph + '</span>';
-  }
+  // одна иконка приложения (векторная копия из phone-icons.js)
   function iconTile(a, dock) {
-    var label = a[0], bg = a[1], glyph = a[2], badge = a[3];
-    if (bg === 'sber') bg = green;
-    var id = '';
-    if (label === 'Настройки') id = 'appSettings';
-    else if (glyph === 'sber') id = 'appBank';
+    var label = a[0], key = a[1], badge = a[2];
+    var id = key === 'settings' ? 'appSettings' : (key === 'sber' ? 'appBank' : '');
+    var svg = (window.PHONE_ICONS[key] || '')
+      .replace('__DOW__', 'СР').replace('__DAY__', H.calendar.day)
+      .replace(/var\(--bkc\)/g, green);
     var badgeHTML = badge ? '<span class="ic-badge">' + badge + '</span>' : '';
     var lbl = dock ? '' : '<div class="lb">' + label + '</div>';
     return '<div class="app"' + (id ? ' id="' + id + '"' : '') + '>' +
-      '<div class="ic" style="background:' + bg + '">' + iconInner(glyph) + badgeHTML + '</div>' + lbl + '</div>';
+      '<div class="ic ic-svg">' + svg + badgeHTML + '</div>' + lbl + '</div>';
   }
   document.getElementById('appGrid').innerHTML = H.apps.map(function (a) { return iconTile(a, false); }).join('');
   document.getElementById('dock').innerHTML = H.dock.map(function (a) { return iconTile(a, true); }).join('');
@@ -299,10 +284,23 @@
       '<div class="rmain"><div class="rt">' + h + '</div></div><div class="chev">›</div>');
   }).join('');
 
-  var grad = ['#4a5a6b','#6b4a5a','#5a6b4a','#4a4a6b','#6b5a4a','#3a5a5a','#5a3a4a','#4a6b5a'];
+  // «фотографии» — не понять что на них: цветовые пятна в сильном расфокусе
+  var photoTpl = [
+    'radial-gradient(circle at 50% 40%, #e9c3a2 20%, transparent 42%), linear-gradient(160deg,#aab9cc,#6f7f95)',       // портрет
+    'linear-gradient(180deg,#a9dcf4 0 46%, #efe1b6 46% 72%, #43a0cf 72%)',                                             // пляж
+    'radial-gradient(circle at 46% 56%, #d5813a 26%, transparent 52%), radial-gradient(circle at 62% 42%, #e7c268 16%, transparent 30%), #5f4230', // еда
+    'linear-gradient(180deg,#bfe2f6 0 42%, #7bab57 42%)',                                                              // природа
+    'linear-gradient(180deg,#182142,#3a2b4a), radial-gradient(circle at 32% 62%, #f4cf6a 6%, transparent 9%), radial-gradient(circle at 56% 72%, #ff9a4a 5%, transparent 8%)', // ночь-город
+    'radial-gradient(circle at 40% 46%, #e2b78d 24%, transparent 46%), linear-gradient(150deg,#c9b39a,#7f6a52)',       // интерьер
+    'radial-gradient(circle at 38% 40%, #e86a8a 16%, transparent 30%), radial-gradient(circle at 62% 56%, #f2c14e 14%, transparent 28%), #6c9a4a', // цветы
+    'linear-gradient(200deg,#f0b27a,#c0392b 70%), radial-gradient(circle at 70% 30%, #ffe08a 12%, transparent 20%)',   // закат
+  ];
   var ph = '';
-  for (var i = 0; i < 28; i++)
-    ph += '<div class="ph" style="background:linear-gradient(135deg,' + grad[i % 8] + ',' + grad[(i + 3) % 8] + ')"></div>';
+  for (var i = 0; i < 28; i++) {
+    var t = photoTpl[(i * 3 + (i % 5)) % photoTpl.length];
+    var rot = ((i * 37) % 22) - 11;
+    ph += '<div class="ph"><i style="background:' + t + '; transform:scale(1.4) rotate(' + rot + 'deg)"></i></div>';
+  }
   document.getElementById('phGrid').innerHTML = ph;
 
   /* ---------- банк ---------- */

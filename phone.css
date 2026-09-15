@@ -93,6 +93,8 @@ body{
 .app{text-align:center}
 .app .ic{width:60px; height:60px; border-radius:14px; margin:0 auto; position:relative;
   display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.22)}
+.app .ic.ic-svg{background:transparent}
+.app .ic svg{width:60px; height:60px; display:block; border-radius:14px}
 .app .lb{font-size:12px; margin-top:6px; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .ic-badge{position:absolute; top:-6px; right:-6px; min-width:20px; height:20px; border-radius:10px;
   background:#ff3b30; color:#fff; font-size:12px; font-weight:700; padding:0 5px;
@@ -188,9 +190,11 @@ body{
 .avatar-sm{width:34px;height:34px;border-radius:50%;background:#3a3a3c;flex:0 0 34px;
   display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
 
-/* фотогалерея */
+/* фотогалерея — «снимки» в сильном расфокусе, не разобрать сюжет */
 .photos{display:grid; grid-template-columns:repeat(4,1fr); gap:3px; padding:2px 3px 40px}
-.ph{aspect-ratio:1; border-radius:2px; background:#333}
+.ph{position:relative; aspect-ratio:1; border-radius:2px; overflow:hidden; background:#2a2a2c}
+.ph i{position:absolute; inset:-32%; display:block;
+  filter:blur(6px) saturate(1.05) brightness(1.02);}
 
 /* ===== БАНК ===== */
 #scr-bank{background:#f3f4f6; color:#111}
