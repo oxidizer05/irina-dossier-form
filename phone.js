@@ -121,6 +121,7 @@ window.PHONESIM = (function () {
     if (running) return;
     running = true; finger.classList.add('on');
     btnRun.classList.add('running'); btnLabel.textContent = 'Пауза';
+    ctl.classList.add('hidden');        // прячем пульт, чтобы не попадал в кадр
     if (!steps.length) rebuild();
     next();
   }

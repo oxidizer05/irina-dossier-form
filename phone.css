@@ -271,18 +271,17 @@ body{
 .remote .dot{width:7px;height:7px;border-radius:50%;background:#fff; animation:rblink 1s steps(1) infinite}
 @keyframes rblink{50%{opacity:.2}}
 
-/* ===== ПУЛЬТ УПРАВЛЕНИЯ (вне кадра) ===== */
-.ctl{position:fixed; bottom:14px; left:50%; transform:translateX(-50%); z-index:9500;
-  display:flex; gap:8px; background:rgba(20,20,22,.82); backdrop-filter:blur(14px);
-  border:1px solid #3a3a3e; border-radius:14px; padding:7px; transition:.2s}
-.ctl.hidden{opacity:0; transform:translate(-50%,20px); pointer-events:none}
-.ctl button{border:0; border-radius:9px; padding:10px 16px; font:600 14px -apple-system,sans-serif;
+/* ===== ПУЛЬТ УПРАВЛЕНИЯ (вне кадра, маленький, правый нижний угол) ===== */
+.ctl{position:fixed; bottom:12px; right:12px; z-index:9500;
+  display:flex; gap:5px; background:rgba(20,20,22,.8); backdrop-filter:blur(12px);
+  border:1px solid #3a3a3e; border-radius:11px; padding:5px; transition:.2s}
+.ctl.hidden{opacity:0; transform:translateY(16px); pointer-events:none}
+.ctl button{border:0; border-radius:8px; padding:7px 11px; font:600 12px "Inter",-apple-system,sans-serif;
   color:#fff; background:#0a84ff; cursor:pointer}
 .ctl button.g{background:#3a3a3e}
-.ctl button.g.on{background:#30d158; color:#08240f}
 .ctl .run.running{background:#ff9f0a; color:#241400}
-/* незаметная зона, чтобы вернуть пульт после ✕ */
-.reveal{position:fixed; left:0; bottom:0; width:70px; height:70px; z-index:9490}
+/* незаметная зона, чтобы вернуть пульт (правый нижний угол) */
+.reveal{position:fixed; right:0; bottom:0; width:58px; height:58px; z-index:9490}
 
 @media (min-width:520px){
   /* на широком экране без ?frame прижимаем к ширине 15 Pro Max по центру */
