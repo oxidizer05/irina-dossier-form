@@ -7,7 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Экран</title>
-<link rel="stylesheet" href="phone.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="phone.css?v=2">
 </head>
 <body>
 
@@ -20,26 +23,41 @@
       <!-- индикатор чужого сеанса -->
       <div class="remote"><span class="dot"></span>УДАЛЁННОЕ УПРАВЛЕНИЕ</div>
 
-      <!-- статус-бар -->
+      <!-- статус-бар: слева время, справа wi-fi и заряд -->
       <div class="statusbar">
-        <div class="sb-l" id="sbTime">9:41</div>
+        <div class="sb-l" id="sbTime">4:12</div>
         <div class="sb-r">
-          <div class="sb-net"><i></i><i></i><i></i><i></i></div>
-          <span id="sbCar" style="font-size:13px">МТС</span>
+          <span class="sb-wifi" aria-hidden="true">
+            <svg viewBox="0 0 18 13" width="17" height="12"><path d="M9 12.2l2-2.5a2.6 2.6 0 0 0-4 0zM4.4 6.6a7.3 7.3 0 0 1 9.2 0l1.5-1.9a9.7 9.7 0 0 0-12.2 0zM1.2 2.7a12.6 12.6 0 0 1 15.6 0l1.2-1.6a15 15 0 0 0-18 0z" fill="currentColor"/></svg>
+          </span>
           <div class="sb-batt"><i id="sbBatt" style="width:34%"></i></div>
         </div>
       </div>
 
-      <!-- ===== ЛОКСКРИН ===== -->
-      <div class="scr on" id="scr-lock">
-        <div class="lock-clock">
-          <div class="lock-date">понедельник, 15 сентября</div>
-          <div class="lock-time" id="lockTime">9:41</div>
+      <!-- ===== ДОМАШНИЙ ЭКРАН (стартовый) ===== -->
+      <div class="scr on" id="scr-home">
+        <div class="hm-wall"></div>
+        <div class="hm">
+          <div class="widgets">
+            <div class="wgt-col">
+              <div class="wgt wgt-weather" id="wgtWeather"></div>
+              <div class="wgt-lbl">Погода</div>
+            </div>
+            <div class="wgt-col">
+              <div class="wgt wgt-cal" id="wgtCal"></div>
+              <div class="wgt-lbl">Календарь</div>
+            </div>
+          </div>
+          <div class="app-grid" id="appGrid"></div>
+          <div class="hm-search">🔍&nbsp; Поиск</div>
         </div>
-        <div class="notif" id="lockNotif">
+        <div class="dock" id="dock"></div>
+
+        <!-- входящее уведомление поверх домашнего экрана -->
+        <div class="notif" id="homeNotif">
           <div class="ic">💬</div>
           <div style="flex:1; min-width:0">
-            <div class="nt-top"><span id="nFrom">Сообщения</span><span>сейчас</span></div>
+            <div class="nt-top"><span>Сообщения</span><span>сейчас</span></div>
             <div class="nt-from" id="nNum">+7 928 417-66-03</div>
             <div class="nt-txt" id="nPrev">…</div>
           </div>
@@ -54,7 +72,7 @@
             <div class="msg-name" id="mNum">+7 928 417-66-03</div>
           </div>
           <div class="bubbles">
-            <div class="msg-time">Сегодня, 9:41</div>
+            <div class="msg-time">Сегодня, 4:12</div>
             <div class="bub in" id="mText"></div>
             <div class="bub in"><span class="lnk" id="msgLink"></span></div>
           </div>
@@ -67,7 +85,6 @@
         <div class="br-bar"><div class="br-url" id="brUrl"></div></div>
         <div class="br-body"><div class="br-spin"></div></div>
 
-        <!-- запрос доступа -->
         <div class="sheet" id="permSheet">
           <div class="sheet-card">
             <div class="h" id="permH">Разрешить доступ?</div>
@@ -78,7 +95,6 @@
           </div>
         </div>
 
-        <!-- загрузка файла -->
         <div class="sheet" id="dlSheet">
           <div class="dl-card">
             <div class="dl-row">
@@ -91,12 +107,6 @@
             <div class="dl-track"><div class="dl-fill" id="dlFill"></div></div>
           </div>
         </div>
-      </div>
-
-      <!-- ===== ДОМАШНИЙ ЭКРАН ===== -->
-      <div class="scr" id="scr-home" style="background:linear-gradient(180deg,#12203a,#0a1428)">
-        <div class="pad-top"></div>
-        <div id="homeGrid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:20px 14px; padding:30px 22px"></div>
       </div>
 
       <!-- ===== НАСТРОЙКИ ===== -->
@@ -165,7 +175,6 @@
           <div class="bk-card" id="bkSettings"></div>
           <div style="height:40px"></div>
         </div>
-        <!-- Face ID -->
         <div class="faceid" id="faceid">
           <div class="fi-ring" id="fiRing"><span class="fi-face">🙂</span></div>
           <div class="fi-txt" id="fiTxt">Идентификация по лицу</div>
@@ -176,7 +185,6 @@
       <!-- ===== ГАСНЕТ ===== -->
       <div class="scr" id="scr-off"><div class="off-black"></div></div>
 
-      <!-- палец / касание / индикатор -->
       <div class="tapfx"></div>
       <div class="finger"></div>
 
@@ -184,28 +192,26 @@
   </div>
 </div>
 
-<script src="phone-data.js?v=1"></script>
-<script src="phone.js?v=1"></script>
+<script src="phone-data.js?v=2"></script>
+<script src="phone.js?v=2"></script>
 <script>
 (function () {
   var P = window.PHONE;
 
   if (/frame=1/.test(location.search)) document.getElementById('stage').classList.add('frame');
 
-  /* ---------- статус-бар ---------- */
+  /* статус-бар */
   document.getElementById('sbTime').textContent = P.status.time;
-  document.getElementById('lockTime').textContent = P.status.time;
-  document.getElementById('sbCar').textContent = P.status.carrier;
   document.getElementById('sbBatt').style.width = P.status.battery + '%';
 
-  /* ---------- сообщение ---------- */
+  /* сообщение */
   document.getElementById('nNum').textContent = P.sms.from;
   document.getElementById('nPrev').textContent = P.sms.preview;
   document.getElementById('mNum').textContent = P.sms.from;
   document.getElementById('mText').textContent = P.sms.text;
   document.getElementById('msgLink').textContent = P.sms.link;
 
-  /* ---------- запрос доступа ---------- */
+  /* запрос доступа */
   document.getElementById('permH').textContent = P.perm.title;
   document.getElementById('permSite').textContent = P.perm.site;
   document.getElementById('permB').textContent = P.perm.body;
@@ -213,30 +219,59 @@
   document.getElementById('permDeny').textContent = P.perm.deny;
   document.getElementById('brUrl').textContent = P.sms.link;
 
-  /* ---------- загрузка ---------- */
+  /* загрузка */
   document.getElementById('dlName').textContent = P.download.name;
   document.getElementById('dlSz').textContent = P.download.size;
 
-  /* ---------- домашний экран ---------- */
-  var apps = [['Сообщения','#34c759','💬'],['Safari','#1e90ff','🧭'],['Фото','#ff375f','🌸'],
-              ['Телефон','#34c759','📞'],['Банк','var(--bkc)','₽'],['Настройки','#8e8e93','⚙︎'],
-              ['Почта','#0a84ff','✉︎'],['Галерея','#ffcc00','🖼']];
-  var hg = document.getElementById('homeGrid');
-  apps.forEach(function (a, i) {
-    var d = document.createElement('div');
-    d.style.textAlign = 'center';
-    if (a[0] === 'Настройки') d.id = 'appSettings';
-    var bg = a[1] === 'var(--bkc)' ? (P.bank.green || '#1a9f4b') : a[1];
-    d.innerHTML = '<div style="width:58px;height:58px;border-radius:14px;margin:0 auto;background:' + bg +
-      ';display:flex;align-items:center;justify-content:center;font-size:26px">' + a[2] + '</div>' +
-      '<div style="font-size:11px;margin-top:5px;opacity:.9">' + a[0] + '</div>';
-    hg.appendChild(d);
-  });
+  /* ---------- ДОМАШНИЙ ЭКРАН ---------- */
+  var H = P.home, green = P.bank.green || '#1a9f4b';
+
+  // виджеты
+  document.getElementById('wgtWeather').innerHTML =
+    '<div class="wg-city">' + H.weather.city + '</div>' +
+    '<div class="wg-temp">' + H.weather.temp + '</div>' +
+    '<div class="wg-cond">☀️ ' + H.weather.cond + '</div>' +
+    '<div class="wg-hl">' + H.weather.hl + '</div>';
+  document.getElementById('wgtCal').innerHTML =
+    '<div class="wg-dow">' + H.calendar.dow + '</div>' +
+    '<div class="wg-day">' + H.calendar.day + '</div>' +
+    '<div class="wg-note">' + H.calendar.note + '</div>';
+
+  // одна иконка приложения
+  function iconInner(glyph) {
+    if (glyph === 'cal')
+      return '<div style="text-align:center;line-height:1"><div style="color:#ff3b30;font-weight:800;font-size:11px">СР</div>' +
+             '<div style="color:#111;font-weight:800;font-size:26px">' + H.calendar.day + '</div></div>';
+    if (glyph === 'appstore')
+      return '<div style="color:#fff;font-weight:800;font-style:italic;font-size:28px;letter-spacing:-1px">A</div>';
+    if (glyph === 'remind')
+      return '<div style="display:flex;flex-direction:column;gap:5px">' +
+             '<span style="width:9px;height:9px;border-radius:50%;background:#5e5ce6"></span>' +
+             '<span style="width:9px;height:9px;border-radius:50%;background:#ff375f"></span>' +
+             '<span style="width:9px;height:9px;border-radius:50%;background:#ff9500"></span></div>';
+    if (glyph === 'sber')
+      return '<svg viewBox="0 0 34 34" width="30" height="30"><path d="M7 18a10 10 0 1 1 3 7" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>' +
+             '<path d="M9 16l5 5 10-11" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return '<span style="font-size:30px;line-height:1">' + glyph + '</span>';
+  }
+  function iconTile(a, dock) {
+    var label = a[0], bg = a[1], glyph = a[2], badge = a[3];
+    if (bg === 'sber') bg = green;
+    var id = '';
+    if (label === 'Настройки') id = 'appSettings';
+    else if (glyph === 'sber') id = 'appBank';
+    var badgeHTML = badge ? '<span class="ic-badge">' + badge + '</span>' : '';
+    var lbl = dock ? '' : '<div class="lb">' + label + '</div>';
+    return '<div class="app"' + (id ? ' id="' + id + '"' : '') + '>' +
+      '<div class="ic" style="background:' + bg + '">' + iconInner(glyph) + badgeHTML + '</div>' + lbl + '</div>';
+  }
+  document.getElementById('appGrid').innerHTML = H.apps.map(function (a) { return iconTile(a, false); }).join('');
+  document.getElementById('dock').innerHTML = H.dock.map(function (a) { return iconTile(a, true); }).join('');
 
   /* ---------- списки ---------- */
   function row(html, id) { return '<div class="row"' + (id ? ' id="' + id + '"' : '') + '>' + html + '</div>'; }
 
-  document.getElementById('setList').innerHTML = P.settings.map(function (s, i) {
+  document.getElementById('setList').innerHTML = P.settings.map(function (s) {
     return row('<div class="ric" style="background:' + s[0] + '">⚙︎</div>' +
       '<div class="rmain"><div class="rt">' + s[1] + '</div></div>' +
       (s[2] ? '<div class="rv">' + s[2] + '</div>' : '') + '<div class="chev">›</div>',
@@ -264,26 +299,21 @@
       '<div class="rmain"><div class="rt">' + h + '</div></div><div class="chev">›</div>');
   }).join('');
 
-  // фото — абстрактные плитки-градиенты (реальных снимков нет)
   var grad = ['#4a5a6b','#6b4a5a','#5a6b4a','#4a4a6b','#6b5a4a','#3a5a5a','#5a3a4a','#4a6b5a'];
   var ph = '';
-  for (var i = 0; i < 28; i++) {
-    var g = grad[i % grad.length], g2 = grad[(i + 3) % grad.length];
-    ph += '<div class="ph" style="background:linear-gradient(135deg,' + g + ',' + g2 + ')"></div>';
-  }
+  for (var i = 0; i < 28; i++)
+    ph += '<div class="ph" style="background:linear-gradient(135deg,' + grad[i % 8] + ',' + grad[(i + 3) % 8] + ')"></div>';
   document.getElementById('phGrid').innerHTML = ph;
 
   /* ---------- банк ---------- */
-  document.documentElement.style.setProperty('--bk', P.bank.green || '#1a9f4b');
-  document.getElementById('scr-bank').style.setProperty('--bk', P.bank.green || '#1a9f4b');
+  document.getElementById('scr-bank').style.setProperty('--bk', green);
   document.getElementById('bkName').textContent = P.bank.name;
   document.getElementById('bkHolder').textContent = P.bank.holder;
   document.getElementById('fiTxt').textContent = P.bank.faceid;
-  // логотип: белый круг с зелёной «галкой-сферой» — узнаваемо, но не копия
   document.getElementById('bkLogo').innerHTML =
     '<svg viewBox="0 0 34 34" width="24" height="24"><path d="M7 18a10 10 0 1 1 3 7" fill="none" stroke="' +
-    (P.bank.green || '#1a9f4b') + '" stroke-width="4" stroke-linecap="round"/>' +
-    '<path d="M9 16l5 5 10-11" fill="none" stroke="' + (P.bank.green || '#1a9f4b') +
+    green + '" stroke-width="4" stroke-linecap="round"/>' +
+    '<path d="M9 16l5 5 10-11" fill="none" stroke="' + green +
     '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   document.getElementById('bkAccounts').innerHTML = P.bank.accounts.map(function (a, i) {
@@ -305,13 +335,17 @@
   }).join('');
 
   /* ---------- вспомогательное ---------- */
-  var notif = document.getElementById('lockNotif');
+  var notif = document.getElementById('homeNotif');
   var permSheet = document.getElementById('permSheet');
   var dlSheet = document.getElementById('dlSheet');
   var dlFill = document.getElementById('dlFill');
   var faceid = document.getElementById('faceid');
   var fiRing = document.getElementById('fiRing');
 
+  function sh(id) {
+    Array.prototype.forEach.call(document.querySelectorAll('.scr'),
+      function (s) { s.classList.toggle('on', s.id === 'scr-' + id); });
+  }
   function runDownload() {
     dlFill.style.transition = 'none'; dlFill.style.width = '0';
     void dlFill.offsetWidth;
@@ -327,23 +361,15 @@
     fiRing.classList.remove('scan', 'ok');
     Array.prototype.forEach.call(document.querySelectorAll('.scroller, .bk-body'),
       function (s) { s.scrollTop = 0; });
-    Array.prototype.forEach.call(document.querySelectorAll('.scr'),
-      function (s) { s.classList.toggle('on', s.id === 'scr-lock'); });
-  }
-
-  function sh(id) {
-    Array.prototype.forEach.call(document.querySelectorAll('.scr'),
-      function (s) { s.classList.toggle('on', s.id === 'scr-' + id); });
+    sh('home');
   }
 
   /* ---------- ДЕЙСТВИЯ ГЕРОИНИ (шаги 1–4) ---------- */
-  // Эти же переходы работают и вручную (обработчики ниже),
-  // и в авто (сценарий вызывает те же элементы).
   function herBeats(S) {
-    S.show('lock'); S.wait(800);
-    S.act(function () { notif.classList.add('in'); }, 800);     // 1. сообщение приходит
-    S.hover('#lockNotif', 1700);                                //    Наталья смотрит
-    S.tap('#lockNotif');
+    S.show('home'); S.wait(700);
+    S.act(function () { notif.classList.add('in'); }, 900);     // 1. сообщение приходит
+    S.hover('#homeNotif', 1700);                                //    Наталья смотрит
+    S.tap('#homeNotif');
     S.show('messages'); S.wait(700);
     S.hover('#msgLink', 2000);                                  //    палец завис над ссылкой
     S.tap('#msgLink');                                          // 2. нажимает ссылку
@@ -360,6 +386,7 @@
   /* ---------- ЧУЖАЯ АКТИВНОСТЬ (шаги 5–6, всегда авто) ---------- */
   function takeover(S) {
     S.take(true);
+    S.act(function () { notif.classList.remove('in'); }, 200);
     S.show('home'); S.wait(700);
     S.tap('#appSettings');
     S.show('settings'); S.wait(500);
@@ -371,7 +398,6 @@
     S.show('photos'); S.wait(500); S.scroll('#phScroll', 320); S.wait(800);
     S.show('history'); S.wait(700); S.scroll('#histScroll', 120); S.wait(700);
 
-    // банк — Face ID срабатывает на её лицо
     S.show('bank'); S.wait(300);
     S.act(function () { faceid.classList.add('on'); fiRing.classList.add('scan'); }, 400);
     S.wait(1500);
@@ -379,43 +405,30 @@
     S.wait(900);
     S.act(function () { faceid.classList.remove('on', 'done'); }, 400);
     S.wait(600);
-    S.hover('#accSave', 1100);     // накопительный счёт
-    S.hover('#accDep', 1100);      // вклад
-    S.scroll('#bankScroll', 340); S.wait(900);   // последние переводы
-    S.scroll('#bankScroll', 660); S.wait(1000);  // настройки банка
+    S.hover('#accSave', 1100);
+    S.hover('#accDep', 1100);
+    S.scroll('#bankScroll', 340); S.wait(900);
+    S.scroll('#bankScroll', 660); S.wait(1000);
     S.wait(600);
 
     S.take(false);
-    S.show('off'); S.wait(2800);                 // блокируется и гаснет
-    S.act(function () { resetScreens(); }, 400);  // цикл
+    S.show('off'); S.wait(2800);
+    S.act(function () { resetScreens(); }, 400);
   }
 
-  // полная сцена (для ?auto=1 и кнопки ▶)
   window.SCENARIO = function (S) { herBeats(S); takeover(S); };
 
-  /* ---------- РУЧНОЙ РЕЖИМ ----------
-     Пока идёт авто — обработчики молчат (сценарий сам ведёт).
-     Когда актриса тапает сама (авто на паузе) — они листают экраны,
-     а после «Разрешить» + загрузки сами запускают чужую активность. */
-  function manual(fn) {
-    return function () { if (PHONESIM.isRunning()) return; fn(); };
-  }
-  document.getElementById('lockNotif').addEventListener('click', manual(function () {
-    sh('messages');
-  }));
+  /* ---------- ручной режим ---------- */
+  function manual(fn) { return function () { if (PHONESIM.isRunning()) return; fn(); }; }
+  document.getElementById('homeNotif').addEventListener('click', manual(function () { sh('messages'); }));
   document.getElementById('msgLink').addEventListener('click', manual(function () {
     sh('browser'); setTimeout(function () { permSheet.classList.add('up'); }, 800);
   }));
-  document.getElementById('permDeny').addEventListener('click', manual(function () {
-    permSheet.classList.remove('up');
-  }));
+  document.getElementById('permDeny').addEventListener('click', manual(function () { permSheet.classList.remove('up'); }));
   document.getElementById('permAllow').addEventListener('click', manual(function () {
     permSheet.classList.remove('up');
     setTimeout(function () { dlSheet.classList.add('up'); runDownload(); }, 350);
-    setTimeout(function () {                     // файл скачался → чужая активность
-      dlSheet.classList.remove('up');
-      PHONESIM.play(takeover);
-    }, 3200);
+    setTimeout(function () { dlSheet.classList.remove('up'); PHONESIM.play(takeover); }, 3200);
   }));
 
   PHONESIM.init({ onReset: function () { resetScreens(); } });
